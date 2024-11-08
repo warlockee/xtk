@@ -17,7 +17,11 @@ docker build -t docker-builder:latest .
 Start the Docker Build Server with:
 
 ```bash
-curl -X POST http://localhost:5000/build -d '{"user": "A", "path": "/mnt/ddn/project/project-infra/infra/test", "tag": "hub.anuttacon.com/infra/helloworld:v1.0.2"}' -H "Content-Type: application/json"
+docker run -d --name docker-builder -p 5000:5000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /mnt/ddnfs01:/mnt/ddn \
+  -v $HOME/.docker:/root/.docker \
+  hub.anuttacon.com/infra/docker-builder:latest
 ```
 
 **Explanation of the flags:**
@@ -36,13 +40,7 @@ curl -X POST http://localhost:5000/build -d '{"user": "A", "path": "/mnt/ddn/pro
 Test the build server by triggering a build:
 
 ```bash
-curl -X POST http://localhost:5000/build \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user": "A",
-    "path": "/mnt/ddn/project/project-infra/infra/test",
-    "tag": "hub.anuttacon.com/infra/helloworld:v1.0.2"
-  }'
+curl -X POST http://localhost:5000/build -d '{"user": "A", "path": "/mnt/ddn/project/project-infra/infra/test", "tag": "hub.anuttacon.com/infra/helloworld:v1.0.2"}' -H "Content-Type: application/json"
 ```
 
 **Parameters:**
